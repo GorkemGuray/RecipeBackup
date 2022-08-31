@@ -14,34 +14,42 @@ namespace RecipeBackup
             string sourceDir = @"C:\OMRON\Soft-NA\Projects\Current";
             string backupDir = @"C:\Users\Public\GT_recipe_backups";
 
+            //backupDir klasörünün olup olmadığı kontrol ediliyor. Yoksa oluşturuluyor.
 
+            if (!Directory.Exists(backupDir))
+            {
+                Directory.CreateDirectory(backupDir);
+
+            } else { 
 
             //Eski reçetler siliniyor.
             //Silinme şartı 6 ay'dan eski olanlar.
 
-            string[] files = Directory.GetFiles(backupDir,"*.csv").Select(file => Path.GetFileName(file)).ToArray();
-            foreach (var file in files)
-            {
-                string[] file_date=file.Split('.');
-                DateTime fileDateTime = DateTime.Parse(file_date[0]);
-                DateTime agoDateTime = DateTime.Now.AddMonths(-6); // Bu satırı değiştirirsen kaç ay öncesi olduğunu değiştirirsin.
-
-                int result = DateTime.Compare(fileDateTime, agoDateTime);
-
-                if (result <0)
+                string[] files = Directory.GetFiles(backupDir, "*.csv").Select(file => Path.GetFileName(file)).ToArray();
+                foreach (var file in files)
                 {
-                    string fileName = fileDateTime.Day.ToString() + '-' + fileDateTime.Month.ToString() + '-' + fileDateTime.Year.ToString() + ".csv";
-                    
-                    if (File.Exists(Path.Combine(backupDir,fileName))) 
-                    {
-                        try
-                        {
-                            File.Delete(Path.Combine(backupDir,fileName));
-                        } 
-                        catch { }
+                    string[] file_date = file.Split('.');
+                    DateTime fileDateTime = DateTime.Parse(file_date[0]);
+                    DateTime agoDateTime = DateTime.Now.AddMonths(-6); // Bu satırı değiştirirsen kaç ay öncesi olduğunu değiştirirsin.
 
+                    int result = DateTime.Compare(fileDateTime, agoDateTime);
+
+                    if (result < 0)
+                    {
+                        string fileName = fileDateTime.Day.ToString() + '-' + fileDateTime.Month.ToString() + '-' + fileDateTime.Year.ToString() + ".csv";
+
+                        if (File.Exists(Path.Combine(backupDir, fileName)))
+                        {
+                            try
+                            {
+                                File.Delete(Path.Combine(backupDir, fileName));
+                            }
+                            catch { }
+
+                        }
                     }
-                } 
+                }
+
             }
 
 
